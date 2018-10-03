@@ -1,0 +1,30 @@
+'''
+    Name: Peter Solimine
+    Course: CMPS 1500
+    Lab Section: Thursday 3:30 - 4:45pm 
+    Assignment: Lab 9 pr 2
+    Date: 04/17/2018
+'''
+
+A. If I had the type of 3D printer that we will likely see in 20-30 years
+in my home now, I would likely print all sorts of daily items. I assume
+that once 3D printers become a household items, companies will start
+selling encrypted bits of code to make items like toothbrushes, 
+hairbrushes, staplers, bags, silverware, even furniture parts. Users like
+me will be able to purchase the code for these items from online markets.
+
+B. This change will lead to a huge change in the way we do global trading
+and manufacturing. Countries will no longer inport or export nearly as
+many goods. Rather, the manufacturing will occur in the home of consumers.
+We likely will still trade intellectual property, and do business with
+foreign competitors and customers, but the entire structure of the system 
+will be changed. 
+
+C. Graphics and 3d modeling are two CS components that play a role in 3D
+printing. Encryption problems would also be involved in transferring data
+between machines securely (for transferring IP to households in the future).
+
+D. Object oriented program is likely used to simplify the process of 
+assigning attributes to certain parts. Graphics is surely an important
+aspect of 3D printing as well, another topic which we touched briefly
+upon in class.

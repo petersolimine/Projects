@@ -1,0 +1,65 @@
+'''
+    Name: Peter Solimine
+    Course: CMPS 1500
+    Lab Section: Thursday 3:30 - 4:45pm 
+    Assignment: Lab 10 pr 4
+    Date: 04/25/2018
+'''
+
+1. Recursive thinking definitely tops my list of takeaways from this course. Its applications for problem solving
+are profound. I have noticed how incredibly applicable this concept of thinking is in daily life. As one example,
+retracing your steps or rethinking your actions is best done by thinking recursively. 
+
+2. Graph theory is another big takeaway. It is much easier now to visualize how social media actually works,
+and to see the many functions and services it provides. For example, creating a list of secondary connections or 
+mutual friends (something which Facebook and LinkedIn both do well).
+
+3. A third important takeaway would be segregation of duties (or method creation). This is very applicable both
+in CS and in daily life. The ability to divide responsibilities among parties is a very efficient and organized
+way to go about solving a problem or completing a task. one example could be the segregartion of duties within
+a corporation. This is intended to reduce fraud (or bugs, one could allude) by giving different responsibilities
+to different people.
+
+4. Debugging is another interesting concept that we covered. This is sometimes the nested version of problem
+solving (problem solving within problem solving). The ability to look objectively at a portion of code and identify
+errors is a skill which likely translates to many industries and jobs. For example, an engineer being able to look
+at another engineers handiwork and identify potential flaws would be improved by a knowledge of debugging.
+
+5. Looping is a very important concept to be familiar with. I have noticed that those who code have an easier time
+communicating literally anything to one another because of their inherently enhanced understanding of logic. A
+large part of this understanding is because of the idea of a loop. Recently I have been watching a show called
+'West World' with my roommate. In one part of Season 1 Episode 3, robots in the show get caught in a loop because
+none of them can perform a necessary task. Explaining this concept to my roommate (who has no prior knowledge of
+coding) proved to be difficult.
+
+6. Along the same lines as my fifth response, if/else statements are something I will carry with me for life.
+Without a sound understanding of these basic logic principles, communication of logic is much more difficult. For
+example, communicating with a stock broker about when to buy and sell can be extraordinarily simplified using basic
+logic. 
+
+7. Object oriented programming (OOP) is also an applicable concept to both programming and life. When a sound
+understanding of OOP is achieved, it is easier to deduce problems by being able to specify the exact attributes
+of the objects involved. Defining, measuring, and toying with these attributes also makes programming an easier
+task for many types of problems. One applicable off-line example of object orienting items is a valet parker
+defining the attributes of cars and parking spots to maximize space in a lot while mitigating risk. The cars 
+attributes could include width, whether or not mirrors fold in, and possibly the cost of the vehicle. A parking 
+spaces attributes would be more basic, likely only including width and depth (but who's to say there couldn't be 
+more to it!).
+
+8. Data structures are extremely important in programming and in many other fields. To a programmer, data
+structures are everything. The difference in speeds of different types of structures in different scenarios
+is often vital to the success or failure of code. Efficient data structures means efficient code. Because this
+connection between data structures and efficiency is strong, a knowledge of data structures is applicable
+in any field requiring efficiency. This includes anything from financial markets to telecommunications to vending
+machines. 
+
+9. Dictionaries are extremely valuable to me, who was formerly an exclusively Java programmer, in problem solving.
+Although Java does allow access to a similar data structure called a HashMap, this structure was not built in.
+For that reason I never discovered it (or its valuable use cases) until this year. Dictionaries allow a 
+programmer to draw connections between two otherise unrelated variables (much like OOP). The ability to connect
+two seemingly unrelated variables is important in data research as well as other similar fields in CS. 
+
+10. Binary data has allowed me to think computationally in ways that I've never been able to do before. The entire
+idea of Computer Number Systems (CNS) is generally misunderstood by the public. With this basic knowledge of how
+computers work and how humans can communicate with them, great leaps in problem solving can be made. In life, an 
+understanding of CNS allows someone to think about mathematics and the base 10 number system in a different light.
