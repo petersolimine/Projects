@@ -1,0 +1,543 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+typedef struct Connections_struct{
+    char p1[255];
+    char p2[255];
+    struct Connections_struct* nextConnection;
+}ConnectionNode;
+
+
+typedef struct PersonInfo_struct {
+    char first[255];
+    char email[255];
+    char last[255];
+    char hometown[255];
+    char hobby[255];
+    int age;
+    struct PersonInfo_struct* nextPersonPtr;
+} PersonNode;
+
+//create a global head for the two linked lists
+PersonNode* head = NULL;
+ConnectionNode* conHead = NULL;
+
+int main(){
+
+    //start by creating a person
+    PersonNode* person1 = NULL;
+    person1 = (PersonNode*) malloc(sizeof(PersonNode));
+    printf("Enter first name of first person: \n");
+    scanf("%s",person1->first);
+    printf("Enter email of first person: \n");
+    scanf("%s",person1->email);
+    head = person1;
+
+    char email[255];
+    char email1[255];
+    char email2[255];
+    char filename[255];
+    char filename2[255];
+    char input = 'M';
+    while(input != 'Q'){
+        printf("Menu:\nA - Add\nC - Connect\nE - Edit\nR - Remove\nQ - Quit\nD - Display\nF - Get Friends\nX - Disconnect\nS - Save Network\nN - Retrieve Network\n");
+        scanf(" %c",&input);
+        if(input == 'A'){
+            printf("Enter email: ");
+            scanf("%s", email);
+            add(email);
+            printPpl();
+        }else if(input == 'C'){
+            printf("Enter email #1: ");
+            scanf("%s", email1);
+            printf("Enter email #2: ");
+            scanf("%s", email2);
+            connect(email1, email2);
+            //printf("%s\n%s\n",conHead->p1,conHead->p2);
+            printConnections();
+        }else if(input == 'E'){
+            printf("Enter email to edit: ");
+            scanf("%s", email);
+            edit(&email);
+            printPpl();
+        }else if(input == 'R'){
+            printf("Enter email of user to remove: ");
+            scanf("%s", email);
+            remove_person(email);
+            printPpl();
+        }else if(input == 'D'){
+            display();
+        }else if(input == 'F'){
+            printf("Enter email: ");
+            scanf("%s", email);
+            getFriends(email);
+        }else if(input == 'S'){
+            printf("Enter People Filename: ");
+            scanf("%s", filename);
+            printf("Enter Connections Filename: ");
+            scanf("%s", filename2);
+            saveNetwork(filename, filename2);
+        }else if(input == 'N'){
+            printf("Enter People Filename: ");
+            scanf("%s", filename);
+            printf("Enter Connections Filename: ");
+            scanf("%s", filename2);
+            retrieveNetwork(filename, filename2);
+        }else if(input == 'X'){
+            printf("Enter email #1: ");
+            scanf("%s", email1);
+            printf("Enter email #2: ");
+            scanf("%s", email2);
+            disconnect(email1, email2);
+            printConnections();
+        }
+    }
+}
+
+int saveNetwork(char* peopleFilename, char* connectionsFilename){
+    if(strcmp(peopleFilename, connectionsFilename) == 0){
+        printf("cant be the same file\n");
+        return 0;
+    }
+    FILE * fpointer;
+    fpointer = fopen(peopleFilename, "w");
+    PersonNode* temp = head;
+    if(temp == NULL){
+        return 0;
+    }
+    while(temp->nextPersonPtr != NULL){
+        fprintf(fpointer,"%s, %s, %s, %d, %s, %s\n", temp->email, temp->first, temp->last, temp->age, temp->hometown, temp->hobby);
+        temp = temp->nextPersonPtr;
+    }
+    fprintf(fpointer,"%s, %s, %s, %d, %s, %s\n", temp->email, temp->first, temp->last, temp->age, temp->hometown, temp->hobby);
+    temp = temp->nextPersonPtr;
+
+    fclose(fpointer);
+
+    FILE * fpointer2;
+    fpointer2 = fopen(connectionsFilename, "w");
+    ConnectionNode* conTemp = conHead;
+    if(conTemp == NULL){
+        return 0;
+    }
+    while(conTemp->nextConnection != NULL){
+        fprintf(fpointer2, "%s, %s\n",conTemp->p1,conTemp->p2);
+        conTemp = conTemp->nextConnection;
+    }
+    fprintf(fpointer2, "%s, %s\n",conTemp->p1,conTemp->p2);
+    conTemp = conTemp->nextConnection;
+
+    fclose(fpointer);
+    return 0;
+
+}
+
+ void retrieveNetwork(char* peopleFilename, char* connectionsFilename){
+
+    if(access(peopleFilename, F_OK)==-1){
+        printf("File does not exist\n");
+        return;
+    }
+    if(access(connectionsFilename, F_OK)==-1){
+        printf("File does not exist\n");
+        return;
+    }
+    head = NULL;
+    conHead = NULL;
+
+    //RETRIEVING INPUT FROM PEOPLE FILE
+    FILE* pFile;
+
+    pFile = fopen(peopleFilename, "r");
+    int items_scanned = 0;
+    int first_time = 0;
+    do {
+        PersonNode* new_people = malloc(sizeof(PersonNode));
+        char new_string[500]="";
+        char new_email[50]="";
+        char new_first[50]="";
+        char new_last[50]="";
+        char new_age_string[50]="";
+        char new_home[50]="";
+        char new_hobby[50]="";
+        items_scanned = fscanf(pFile, " %[^\n]s" , new_string);
+
+
+        int current_element = 1;
+        int i = 0;
+        int curr_index = 0;
+        while (new_string[i] != '\0') {
+            if (new_string[i] == ',') {
+                current_element++;
+                i++;
+                curr_index = -1;
+            }
+            else if (current_element == 1) {
+                new_email[curr_index] = new_string[i];
+                new_email[curr_index + 1] = '\0';
+            }
+            else if (current_element == 2) {
+                new_first[curr_index] = new_string[i];
+                new_first[curr_index + 1] = '\0';
+            }
+            else if (current_element == 3) {
+                new_last[curr_index] = new_string[i];
+                new_last[curr_index + 1] = '\0';
+            }
+            else if (current_element == 4) {
+                new_age_string[curr_index] = new_string[i];
+                new_age_string[curr_index + 1] = '\0';
+            }
+            else if (current_element == 5) {
+                new_home[curr_index] = new_string[i];
+                new_home[curr_index + 1] = '\0';
+            }
+            else if (current_element == 6) {
+                new_hobby[curr_index] = new_string[i];
+                new_hobby[curr_index + 1] = '\0';
+            }
+            i++;
+            curr_index++;
+        }
+        //printf("stuff: %s, %s, %s, %s, %s, %s\n", new_email, new_first, new_last, new_age_string, new_home, new_hobby);
+        strcpy(new_people->email, new_email);
+        strcpy(new_people->first, new_first);
+        strcpy(new_people->last, new_last);
+        new_people->age = atoi(new_age_string);
+        strcpy(new_people->hometown, new_home);
+        strcpy(new_people->hobby, new_hobby);
+        if(first_time == 0){
+            first_time = 1;
+            head = new_people;
+            continue;
+        }
+
+        if (items_scanned == 1) {
+            PersonNode* temp = head;
+            while(temp->nextPersonPtr != 0){
+                    temp = temp->nextPersonPtr;
+            }
+            temp->nextPersonPtr = new_people;
+        }
+    } while (items_scanned == 1);
+    fclose(pFile);
+
+    FILE* connectFile;
+    connectFile = fopen(connectionsFilename, "r");
+    int scanItem = 0;
+
+    do {
+        char people[150];
+        char* friend1;
+        char *friend2;
+
+        scanItem = fscanf(connectFile, " %[^\n]s", people);
+
+        friend1 = strtok(people,", ");
+        friend2 = strtok(NULL, ", ");
+
+        if(scanItem == 1){
+            connect(friend1, friend2);
+        }
+
+
+    }while (scanItem == 1);
+
+}
+int getFriends(char* email){
+    if(emailExists(email)!=0){
+        printf("Email does not exist.\n");
+        return 0;
+    }
+
+    ConnectionNode* conTemp = conHead;
+    printf("Immediate Connections: \n");
+    while(conTemp != NULL){
+        if(strcmp(email,conTemp->p1) == 0){
+            printf("%s\n",conTemp->p2);
+        }else if(strcmp(email,conTemp->p2) == 0){
+            printf("%s\n",conTemp->p1);
+        }
+        conTemp = conTemp->nextConnection;
+    }
+    return 0;
+}
+
+int display(){
+    PersonNode* temp = head;
+    ConnectionNode* conTemp = conHead;
+    if(head == NULL){
+        printf("No users to display.\n");
+        return 0;
+    }
+    while (temp != NULL){
+        printf("%s: {\n",temp->first);
+        while(conTemp != NULL){
+            if(strcmp(temp->email,conTemp->p1) == 0){
+                printf("\t%s\n",conTemp->p2);
+            }else if(strcmp(temp->email,conTemp->p2) == 0){
+                printf("\t%s\n",conTemp->p1);
+            }
+            conTemp = conTemp->nextConnection;
+        }
+        conTemp = conHead;
+        printf("}\n");
+        temp = temp->nextPersonPtr;
+    }
+    return 0;
+}
+
+int remove_person(char email[]){
+    if(emailExists(email) !=0){
+        printf("Email does not exist\n");
+        return 0;
+    }
+    //if we're removing the head
+    if(strcmp(head->email,email)==0){
+        if(head->nextPersonPtr == NULL){
+            head = NULL;
+            remove_connections(email);
+            return 0;
+        }else{
+            head = head->nextPersonPtr;
+            remove_connections(email);
+            return 0;
+        }
+    }else{//if we're not removing the head
+        PersonNode* temp = head;
+        PersonNode* tempLag = head;
+        while(temp->nextPersonPtr != 0){
+            if(strcmp(temp->email,email) == 0){
+                tempLag->nextPersonPtr = temp->nextPersonPtr;
+                break;
+            }
+            tempLag = temp;
+            temp = temp->nextPersonPtr;
+        }
+        if(strcmp(temp->email,email) == 0){
+            tempLag->nextPersonPtr = temp->nextPersonPtr;
+        }
+    }
+    remove_connections(email);
+    return 0;
+}
+    //start from beginning and remove all instances where friend is found
+int remove_connections(char email[]){
+    if(conHead == NULL){
+        return 0;
+    }
+    while(strcmp(conHead->p1,email) == 0 || strcmp(conHead->p2,email) == 0){
+        conHead = conHead->nextConnection;
+    }
+    //now traverse the rest
+    ConnectionNode* conTemp = conHead;
+    ConnectionNode* conTempLag = conHead;
+    while(conTemp->nextConnection != NULL){
+        if(strcmp(conTemp->p1,email) == 0 || strcmp(conTemp->p2,email) == 0){
+            conTempLag->nextConnection = conTemp->nextConnection;
+        }
+        conTempLag = conTemp;
+        conTemp = conTemp->nextConnection;
+    }
+    if(strcmp(conTemp->p1,email) == 0 || strcmp(conTemp->p2,email) == 0){
+        conTempLag->nextConnection = NULL;
+    }
+    return 0; //0 if it exists
+}
+int disconnect(char* email1, char* email2){
+    if(emailExists(email1) != 0){
+        printf("email 1 does not exist\n");
+        return 0;
+    }
+    //check for existence of email 2
+    if(emailExists(email2) != 0){
+        printf("email 2 does not exist\n");
+        return 0;
+    }
+    ConnectionNode* temp = conHead->nextConnection;
+    ConnectionNode* tempLag = conHead;
+    while(temp != NULL){
+        if((strcmp(temp->p1,email1) == 0 && strcmp(temp->p2,email2) == 0)  || (strcmp(temp->p1,email2) == 0 && strcmp(temp->p2,email1) == 0)){
+            tempLag->nextConnection = temp->nextConnection;
+            return 1;
+        }
+        tempLag = temp;
+        temp = temp->nextConnection;
+    printf("connection does not exist.\n");
+    return 0;
+    }
+}
+
+
+int connect(char* email1, char* email2){
+    //check for existence of email 1
+    if(emailExists(email1) != 0){
+        printf("email 1 does not exist\n");
+        return 0;
+    }
+    //check for existence of email 2
+    if(emailExists(email2) != 0){
+        printf("email 2 does not exist\n");
+        return 0;
+    }
+    ConnectionNode* temp = conHead;
+    ConnectionNode* tempLag = conHead;
+    while(temp != NULL){
+        if((strcmp(temp->p1,email1) == 0 && strcmp(temp->p2,email2) == 0)  || (strcmp(temp->p1,email2) == 0 && strcmp(temp->p2,email1) == 0)){
+            printf("connection already exists.\n");
+            return 1;
+        }
+        tempLag = temp;
+        temp = temp->nextConnection;
+    }
+    //add the connection
+    ConnectionNode* temp3 = NULL;
+    temp3 = (ConnectionNode*) malloc(sizeof(ConnectionNode));
+
+    strcpy(temp3->p1, email1);
+    strcpy(temp3->p2, email2);
+
+    if(tempLag == NULL){
+        conHead = temp3;
+        return 1;
+    }
+    tempLag->nextConnection = temp3;
+    return 1;
+}
+
+int add(char* email){
+    PersonNode* personToAdd = NULL;
+    personToAdd = (PersonNode*) malloc(sizeof(PersonNode));
+    strcpy(personToAdd->email,email);
+
+    //if there are no ppl yet
+    if(head == NULL){
+        printf("hometown: ");
+        scanf("%s",personToAdd->hometown);
+        printf("hobby: ");
+        scanf("%s",personToAdd->hobby);
+        printf("First name: ");
+        scanf("%s",personToAdd->first);
+        printf("Last name: ");
+        scanf("%s",personToAdd->last);
+        printf("Age: ");
+        scanf("%d",&personToAdd->age);
+        head = personToAdd;
+        return 0;
+    }
+    PersonNode* temp = head;
+    //iterate through the linked list data structure
+    //Look for instances where email is the same
+    while(temp->nextPersonPtr != 0){
+        if (strcmp(temp->email, personToAdd->email) == 0){
+            printf("Person already exists\n");
+            return 0;
+        }
+        temp = temp->nextPersonPtr;
+    }
+    //check to see if you went through the entire data structure
+    if(!(strcmp(temp->email, personToAdd->email) == 0) && temp->nextPersonPtr == NULL){
+        //printf("adding.......\n");
+        temp = head;
+        while(temp->nextPersonPtr != 0){
+            temp = temp->nextPersonPtr;
+        }
+        temp->nextPersonPtr = personToAdd;
+    }
+    //check the last element of the data structure (because it doesn't get tested in the loop)
+    else if(strcmp(temp->email, personToAdd->email) == 0 && temp->nextPersonPtr == NULL){
+        printf("Person already exists\n");
+        return 0;
+    }
+    printf("hometown: ");
+    scanf("%s",personToAdd->hometown);
+    printf("hobby: ");
+    scanf("%s",personToAdd->hobby);
+    printf("First name: ");
+    scanf("%s",personToAdd->first);
+    printf("Last name: ");
+    scanf("%s",personToAdd->last);
+    printf("Age: ");
+    scanf("%d",&personToAdd->age);
+    printf("\n");
+
+}
+
+int printPpl(){
+    if(head == NULL){
+        printf("\nEMPTY. No Users.\n");
+        return 0;
+    }
+    PersonNode* temp = head;
+    while(temp->nextPersonPtr != 0){
+        printf("%s\n",temp->email);
+        temp = temp->nextPersonPtr;
+        }
+    printf("%s\n",temp->email);
+return 0;
+}
+void printConnections(){
+    ConnectionNode* temp = conHead;
+    while(temp->nextConnection != NULL){
+        printf("%s <---> %s\n",temp->p1,temp->p2);
+        temp = temp->nextConnection;
+        }
+    printf("%s <---> %s\n",temp->p1,temp->p2);
+}
+
+int edit(char* email){
+    PersonNode* temp = head;
+    while(strcmp(temp->email, email) != 0){
+        if(temp->nextPersonPtr == 0){
+            printf("Email does not exist\n");
+            return 0;
+        }
+        temp = temp->nextPersonPtr;
+    }
+    char input = 'M';
+    char val[255];
+    printf("INFO\nfirst: %s\nlast: %s\nemail: %s\nhometown: %s\nhobby: %s\nage: %d\n",temp->first,temp->last,temp->email,temp->hometown,temp->hobby,temp->age);
+    while (input != 'Q'){
+        printf("What would you like to edit?\n1 - Email\n2 - First\n3 - Last\n4 - Hometown\n5 - Hobby\n6 - Age\nQ - Quit Edit Menu\n");
+        scanf(" %c",&input);
+        if(input == '1'){
+            printf("Enter Value: \n");
+            scanf("%s",val);
+            strcpy(temp->email,val);
+        }else if(input == '2'){
+            printf("Enter Value: \n");
+            scanf("%s",val);
+            strcpy(temp->first, val);
+        }else if(input == '3'){
+            printf("Enter Value: \n");
+            scanf("%s",val);
+            strcpy(temp->last, val);
+        }else if(input == '4'){
+            printf("Enter Value: \n");
+            scanf("%s",val);
+            strcpy(temp->hometown, val);
+        }else if(input == '5'){
+            printf("Enter Value: \n");
+            scanf("%s",val);
+            strcpy(temp->hobby, val);
+        }else if(input == '6'){
+            printf("Enter Value: \n");
+            scanf("%s",val);
+            temp->age = atoi(val);
+        }
+    }
+    printf("\n");
+    return 0;
+}
+int emailExists(char* email){
+    PersonNode* temp = head;
+    while(strcmp(temp->email, email) != 0){
+        if(temp->nextPersonPtr == 0){
+            return -1; //negative if it does not exist
+        }
+        temp = temp->nextPersonPtr;
+    }
+    return 0; //0 if it exists
+}
