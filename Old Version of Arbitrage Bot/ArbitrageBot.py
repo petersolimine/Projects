@@ -98,11 +98,11 @@ while True:
                     print('Market is ',market)
                 else:
                     #print('Damn... off by ',prof_percent,'%')
-                    poop = 'pee'
+                    pop = 'p'
             else:
                 #base_price = float(binance.depth(other+'USDT', limit=5)[0][0][0])
                 #sbid_temp = binance.depth(base+other, limit=5)[0][0]
-                poop = 'pee'
+                pop = 'p'
 
 
 '''
